@@ -46,7 +46,7 @@ fn strip(s: &str) -> String {
             _ => {}
         }
     }
-    out.replace("&quot;", "\"").replace("&amp;", "&").replace("&nbsp;", " ").replace("&lt;", "<").replace("&gt;", ">")
+    omsi_launcher_lib::decode_html_entities(&out)
 }
 
 impl Tutorial {
@@ -98,5 +98,12 @@ mod tests {
         let (t, x) = super::page_text("<style>b{}</style><h2>Hello!</h2><p>One &quot;two&quot;</p><p>Three</p>");
         assert_eq!(t, "Hello!");
         assert_eq!(x, "One \"two\"\nThree");
+    }
+
+    #[test]
+    fn german_html_entities() {
+        let (title, text) = super::page_text("<h2>Fahrg&auml;ste</h2><p>Men&uuml; &amp; T&#252;ren &ndash; gr&ouml;&szlig;er</p>");
+        assert_eq!(title, "Fahrgäste");
+        assert_eq!(text, "Menü & Türen – größer");
     }
 }
